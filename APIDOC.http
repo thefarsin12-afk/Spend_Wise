@@ -1,0 +1,71 @@
+# ==== Sign Up section
+
+###
+POST http://127.0.0.1:8000/v1/spending/signup/
+Content-Type: application/json
+
+{
+    "username":"react",
+    "email":"react@gmail.com",
+    "password":"password@123"
+}
+
+#list user
+###
+GET http://127.0.0.1:8000/v1/spending/me/
+Accept: application/json
+Authorization: Basic react:password@123
+
+#===== expenses =====
+
+# list api
+###
+GET http://127.0.0.1:8000/v1/spending/expenses/
+Accept: application/json
+Authorization: Basic react:password@123
+
+# api for creat
+###
+POST http://127.0.0.1:8000/v1/spending/expenses/
+Content-Type: application/json
+Authorization: Basic react:password@123
+
+{
+    "title":"Bus Fees",
+
+    "amount":"330",
+
+    "category":"BILLS",
+
+    "payment_method":"upi"
+}
+
+# api for detail
+###
+GET http://127.0.0.1:8000/v1/spending/expenses/1/
+Accept: application/json
+Authorization: Basic react:password@123
+
+# api for updating
+###
+PUT http://127.0.0.1:8000/v1/spending/expenses/1/
+Content-Type: application/json
+Authorization: Basic react:password@123
+
+{
+    "id": 1,
+    "title": "Medcine",
+    "amount": "1500",
+    "category": "HEALTH",
+    "priority": "need",
+    "payment_method": "upi",
+    "created_at": "2026-10-09T06:11:11.857781Z",
+    "updated_at": "2026-10-09T06:11:11.857811Z",
+    "owner": 2
+  }
+
+# api for delete
+###
+DELETE http://127.0.0.1:8000/v1/spending/expenses/1/
+Accept: application/json
+Authorization: Basic react:password@123
