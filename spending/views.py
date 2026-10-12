@@ -6,8 +6,6 @@ from rest_framework.response import Response
 from rest_framework import authentication,permissions
 
 from spending.permission import IsOwner
-
-
 from spending.models import Expense
 from spending.serailizer import UserSerializer,ExpenseSerializer
 
