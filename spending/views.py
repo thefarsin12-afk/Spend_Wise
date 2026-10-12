@@ -5,6 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication,permissions
 
+from spending.permission import IsOwner
+
+
 from spending.models import Expense
 from spending.serailizer import UserSerializer,ExpenseSerializer
 
@@ -32,7 +35,7 @@ class SignUpView(APIView):
 
 class GetMeView(APIView):
 
-    authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -49,7 +52,7 @@ class GetMeView(APIView):
 
 class ExpenselistCreatView(APIView):
 
-    authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -80,21 +83,25 @@ class ExpenselistCreatView(APIView):
 
 class ExpenseRetrieveUpdateDeleteView(APIView):
 
-    authentication_classes = [authentication.BasicAuthentication]
+    authentication_classes = [authentication.TokenAuthentication]
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwner]
 
-    def get(sel,request,pk=None):
+    def get(self,request,pk=None):
 
-        instans = get_object_or_404(Expense,id=pk)
+        instance = get_object_or_404(Expense,id=pk)
 
-        serializer_instants = ExpenseSerializer(instans)
+        self.check_object_permissions(request,instance)
+
+        serializer_instants = ExpenseSerializer(instance)
 
         return Response(data=serializer_instants.data)
 
     def put(self,request,pk=None):
 
         instance = get_object_or_404(Expense,id=pk)
+
+        self.check_object_permissions(request,instance)
 
         form_data = request.data
 
@@ -112,9 +119,11 @@ class ExpenseRetrieveUpdateDeleteView(APIView):
 
     def delete(self,request,pk=None):
 
-        instantse = get_object_or_404(Expense,id=pk)
+        instance = get_object_or_404(Expense,id=pk)
 
-        instantse.delete()
+        self.check_object_permissions(request,instance)
+
+        instance.delete()
 
         return Response(data="message:deleted")
 
