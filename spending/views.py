@@ -165,13 +165,13 @@ class SummaryView(APIView):
         if today_transaction: 
 
             # daily summary
-            today_expense = today_transaction.values("amount").aggregate(total = Sum("amount")).get("total")
+            today_expense = today_transaction.values("amount").aggregate(total = Sum("amount")).get("today_total")
 
             # category summary
             category_Summary = today_transaction.values("category").annotate(category_total=Sum("amount"))
 
             # response data 
-            response_data["total"] = today_expense
+            response_data["today_total"] = today_expense
     
             response_data["category_total:"]= category_Summary
 
@@ -200,9 +200,9 @@ class BudgetPlanView(APIView):
 
         if monthly_summary:
 
-            monthly_total = monthly_summary.values("amount").aggregate(monthly_total=Sum("amount")).get("monthly_total")
+            monthly_total = monthly_summary.values("amount").aggregate(total=Sum("amount")).get("total")
 
-            response_data["monthly_total"] = monthly_total
+            response_data["total"] = monthly_total
 
             #monthly_category
 
@@ -210,7 +210,9 @@ class BudgetPlanView(APIView):
 
             response_data["category_summary"]=category_summary
 
-            get_budget_plan(response_data)
+            budget_plan = get_budget_plan(response_data)
+
+            response_data["plan"] = budget_plan
 
         return Response(data=response_data)    
 
