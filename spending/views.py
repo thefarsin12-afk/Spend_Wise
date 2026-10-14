@@ -1,5 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from django.contrib.auth.models import User
+from datetime import datetime 
+from django.db.models import Sum
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,6 +10,8 @@ from rest_framework import authentication,permissions
 from spending.permission import IsOwner
 from spending.models import Expense
 from spending.serailizer import UserSerializer,ExpenseSerializer
+
+from spending.ai_service import get_budget_plan
 
 
 class SignUpView(APIView):
@@ -126,4 +130,88 @@ class ExpenseRetrieveUpdateDeleteView(APIView):
         return Response(data="message:deleted")
 
 
-            
+class SummaryView(APIView):
+
+    authentication_classes = [authentication.TokenAuthentication]
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,requset):
+
+        response_data = {
+
+            "total":0
+        }
+
+        curr_date = datetime.now().today()
+
+        curr_year = datetime.now().year
+
+        curr_month = datetime.now().month
+
+        # monthly trasaction
+        monthly_trasaction = Expense.objects.filter(owner = requset.user,created_at__month =curr_month,created_at__year =curr_year)
+
+        if monthly_trasaction:
+
+            trascation = monthly_trasaction.values("amount").aggregate(total=Sum("amount")).get("total")
+
+            response_data ["monthly_transaction"] = trascation
+
+        
+
+        today_transaction = Expense.objects.filter(owner = requset.user,created_at__date=curr_date)
+
+        if today_transaction: 
+
+            # daily summary
+            today_expense = today_transaction.values("amount").aggregate(total = Sum("amount")).get("total")
+
+            # category summary
+            category_Summary = today_transaction.values("category").annotate(category_total=Sum("amount"))
+
+            # response data 
+            response_data["total"] = today_expense
+    
+            response_data["category_total:"]= category_Summary
+
+        return Response(data=response_data)    
+
+class BudgetPlanView(APIView):            
+
+    authentication_classes = [authentication.TokenAuthentication]
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,reqeust):
+
+        response_data = {
+
+            "total":0
+        }
+
+        # monthly_total
+
+        curr_month = datetime.now().month
+
+        curr_year = datetime.now().year
+
+        monthly_summary = Expense.objects.filter(owner=reqeust.user,created_at__month=curr_month,created_at__year=curr_year)
+
+        if monthly_summary:
+
+            monthly_total = monthly_summary.values("amount").aggregate(monthly_total=Sum("amount")).get("monthly_total")
+
+            response_data["monthly_total"] = monthly_total
+
+            #monthly_category
+
+            category_summary = monthly_summary.values("category").annotate(total=Sum('amount'))
+
+            response_data["category_summary"]=category_summary
+
+            get_budget_plan(response_data)
+
+        return Response(data=response_data)    
+
+

@@ -34,23 +34,23 @@ Authorization: Token b18dec7aae30d9bf9d2e38bb5e644cb83a1f4981
 GET http://127.0.0.1:8000/v1/spending/expenses/
 Accept: application/json
 #Authorization: Basic react:password@123
-Authorization: Token b18dec7aae30d9bf9d2e38bb5e644cb83a1f4981
+Authorization: Token 1f6207eaadd035db7e4c6cd01fd248d2b957b406
 
 # api for creat
 ###
 POST http://127.0.0.1:8000/v1/spending/expenses/
 Content-Type: application/json
 #Authorization: Basic react:password@123
-Authorization: Token b18dec7aae30d9bf9d2e38bb5e644cb83a1f4981
+Authorization: Token 1f6207eaadd035db7e4c6cd01fd248d2b957b406
 
 {
-    "title":"Gym Fees",
+    "title":"Auto",
 
-    "amount":"700",
+    "amount":"40",
 
-    "category":"BILLS",
+    "category":"TRAVEL",
 
-    "payment_method":"upi"
+    "payment_method":"cash"
 }
 
 # api for detail
@@ -68,20 +68,32 @@ Content-Type: application/json
 Authorization: Token b18dec7aae30d9bf9d2e38bb5e644cb83a1f4981
 
 {
-    "id": 1,
-    "title": "Medcine",
-    "amount": "1500",
-    "category": "HEALTH",
+    "id": 9,
+    "title": "Egg",
+    "amount": "660.00",
+    "category": "FOOD",
     "priority": "need",
-    "payment_method": "upi",
-    "created_at": "2026-10-09T06:11:11.857781Z",
-    "updated_at": "2026-10-09T06:11:11.857811Z",
-    "owner": 2
+    "payment_method": "cash",
+    "created_at": "2026-10-14T06:12:15.831328Z",
+    "updated_at": "2026-10-14T06:12:15.831356Z",
+    "owner": 1
   }
 
 # api for delete
 ###
-DELETE http://127.0.0.1:8000/v1/spending/expenses/1/
+DELETE http://127.0.0.1:8000/v1/spending/expenses/8/
 Accept: application/json
 #Authorization: Basic react:password@123
 Authorization: Token b18dec7aae30d9bf9d2e38bb5e644cb83a1f4981
+
+# api for summry today expense
+###
+GET http://127.0.0.1:8000/v1/spending/expenses/summary/
+Accept: application/json
+Authorization: Token 1f6207eaadd035db7e4c6cd01fd248d2b957b406
+
+# api for budget
+###
+GET http://127.0.0.1:8000/v1/spending/expenses/budget/
+Accept: application/json
+Authorization: Token 1f6207eaadd035db7e4c6cd01fd248d2b957b406
